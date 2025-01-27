@@ -1,0 +1,8 @@
+README.md
+pyproject.toml
+Eleven_Case.egg-info/PKG-INFO
+Eleven_Case.egg-info/SOURCES.txt
+Eleven_Case.egg-info/dependency_links.txt
+Eleven_Case.egg-info/requires.txt
+Eleven_Case.egg-info/top_level.txt
+eleven_env/bin/activate_this.py
