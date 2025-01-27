@@ -1,0 +1,10 @@
+# Virtual environment
+eleven_env/
+Eleven_Case.egg-info/
+*.egg-info
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyw
+*.pyz
