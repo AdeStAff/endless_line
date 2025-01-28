@@ -60,7 +60,18 @@ df_closure_and_attendance_and_waiting = pd.merge(df_waiting_times_extract, df_cl
 
 df_final = df_closure_and_attendance_and_waiting.sort_values(
     ["ENTITY_DESCRIPTION_SHORT", "DEB_TIME"])
-# adding weather
+
+# Add the night show data 
+df_parade_shows = pd.read_excel(data_path + "parade_night_show.xlsx")
+df_final = pd.merge(
+    df_final, 
+    df_parade_shows, 
+    left_on=["USAGE_DATE"],
+    right_on=["WORK_DATE"],
+    how="left"
+)
+
+#adding weather
 weather = pd.read_csv(data_path + 'weather_data.csv')
 weather['dt'] = pd.to_datetime(weather['dt'], unit='s')
 
