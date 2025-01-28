@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import holidays
 
 data_path = "data/"
 
@@ -11,6 +12,8 @@ df_attendance_extract["USAGE_DATE"] = pd.to_datetime(
     df_attendance_extract["USAGE_DATE"], format="%Y-%m-%d")
 df_attendance_extract.rename(
     columns={"attendance": "PARK_ATTENDANCE"}, inplace=True)
+# Making sure that the data makes sense - the attendance cannot be negative
+df_attendance_extract["PARK_ATTENDANCE"] = np.maximum(df_attendance_extract["PARK_ATTENDANCE"],0)
 
 # Extracting the list of attractions for PortAventura World
 df_link_attraction_park = pd.read_csv(data_path + 'link_attraction_park.csv')
@@ -58,20 +61,20 @@ df_waiting_times_extract["USAGE_DATE"] = pd.to_datetime(
 df_closure_and_attendance_and_waiting = pd.merge(df_waiting_times_extract, df_closure_and_attendance, on=[
                                                  "USAGE_DATE", "ENTITY_DESCRIPTION_SHORT"], how="left")
 
-df_final = df_closure_and_attendance_and_waiting.sort_values(
+df_int = df_closure_and_attendance_and_waiting.sort_values(
     ["ENTITY_DESCRIPTION_SHORT", "DEB_TIME"])
 
-# Add the night show data 
-df_parade_shows = pd.read_excel(data_path + "parade_night_show.xlsx")
-df_final = pd.merge(
-    df_final, 
-    df_parade_shows, 
-    left_on=["USAGE_DATE"],
-    right_on=["WORK_DATE"],
-    how="left"
-)
+# Making sure that tha data makes sense - the number of guests carried cannot be higher than the capacity
+df_int["GUEST_CARRIED"] = np.minimum(df_int["GUEST_CARRIED"],df_int["ADJUST_CAPACITY"])
 
-#adding weather
+# Adding parade data
+df_parades = pd.read_excel(data_path + 'parade_night_show.xlsx')
+df_parades.drop(columns=["Unnamed: 0"],inplace=True)
+df_parades["WORK_DATE"] = pd.to_datetime(df_parades["WORK_DATE"],format="%Y-%m-%d")
+df_parades.rename(columns={"WORK_DATE":"USAGE_DATE"},inplace=True)
+df_final = pd.merge(df_int,df_parades,on=["USAGE_DATE"],how="left")
+
+# Adding weather data - temperature, humidity and wind_speed
 weather = pd.read_csv(data_path + 'weather_data.csv')
 weather['dt'] = pd.to_datetime(weather['dt'], unit='s')
 
@@ -87,5 +90,10 @@ df_final = df_final_with_weather.sort_values(
     ["ENTITY_DESCRIPTION_SHORT", "DEB_TIME"])
 df_final = df_final.drop(columns=['key_0']
                          )
+
+# Adding holidays
+spanish_holidays = holidays.Spain()
+df_final['is_holiday'] = df_final["USAGE_DATE"].apply(lambda x: x in spanish_holidays)
+df_final.rename(columns={"USAGE_DATE":"DATE"},inplace=True)
 
 df_final.to_csv(data_path + 'portaventura_world_data.csv', index=False)

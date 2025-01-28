@@ -13,6 +13,7 @@ dependencies = [
     "ipykernel>=6.25.0",
     "openpyxl>=3.1.2",
     "xgboost>=1.7.6",
+    "holidays>=0.63"
 ]
 requires-python = ">=3.12"
 
