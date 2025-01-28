@@ -92,8 +92,8 @@ df_final = df_final.drop(columns=['key_0']
                          )
 
 # Adding holidays
-french_holidays = holidays.France()
-df_final['is_holiday'] = df_final["USAGE_DATE"].apply(lambda x: x in french_holidays)
+spanish_holidays = holidays.Spain()
+df_final['is_holiday'] = df_final["USAGE_DATE"].apply(lambda x: x in spanish_holidays)
 df_final.rename(columns={"USAGE_DATE":"DATE"},inplace=True)
 
 df_final.to_csv(data_path + 'portaventura_world_data.csv', index=False)
