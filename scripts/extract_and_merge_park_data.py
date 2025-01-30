@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import holidays
 
-data_path = "data/"
+data_path = "../data/"
 
 # Extracting the attendance data for PortAventura World
 df_attendance = pd.read_csv(data_path + 'attendance.csv')
