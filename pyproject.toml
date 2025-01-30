@@ -15,6 +15,7 @@ dependencies = [
     "xgboost>=1.7.6",
     "holidays>=0.63",
     "streamlit>=1.41.1",
+    "prophet>=1.1.6"
 ]
 requires-python = ">=3.12"
 
